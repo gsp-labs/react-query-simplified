@@ -1,27 +1,24 @@
-import {useCallback, useState} from "react";
+import {useState} from "react";
+import {Api} from "../../services/json-api";
 
-export type JsonApi = {
+export type UseJsonApi = {
   callApi: () => Promise<void>;
   responseBody: any;
   metadata?: Response
 }
 
-type UseApi = (input: RequestInfo, init?: RequestInit) => JsonApi
-
-const useJsonApi: UseApi = (input: RequestInfo, init?: RequestInit) => {
+const useJsonApi = (api: Api) => {
   const [responseBody, setResponseBody] = useState<any>()
   const [metadata, setMetadata] = useState<Response>()
 
   const callApi = async () => {
-      const response: Response = await fetch(input, init)
-      const responseBody = await response.json()
-      setResponseBody(responseBody)
-      setMetadata(response)
+      const response = await api.invoke()
+      setResponseBody(response.body)
+      setMetadata(response.metadata)
   }
 
   return {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    callApi: useCallback(() => callApi(), []),
+    callApi: callApi,
     responseBody,
     metadata,
   }
