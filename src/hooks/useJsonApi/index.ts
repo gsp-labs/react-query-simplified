@@ -1,13 +1,13 @@
 import {useState} from "react";
-import {Api} from "../../services/json-api";
+import {Api, ApiResponse} from "../../services/json-api";
 
-export type UseJsonApi = {
+type CallApi = {
   callApi: () => Promise<void>;
-  responseBody: any;
-  metadata?: Response
 }
 
-const useJsonApi = (api: Api) => {
+export type UseJsonApi = CallApi & ApiResponse
+
+const useJsonApi = (api: Api): UseJsonApi => {
   const [responseBody, setResponseBody] = useState<any>()
   const [metadata, setMetadata] = useState<Response>()
 
@@ -19,7 +19,7 @@ const useJsonApi = (api: Api) => {
 
   return {
     callApi: callApi,
-    responseBody,
+    body: responseBody,
     metadata,
   }
 }

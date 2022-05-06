@@ -25,15 +25,15 @@ type Response = {
 
 const App = () => {
 
-  // const {callApi, responseBody} = useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1"))
+  // const {callApi, body} = useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1"))
 
   // const retriableApi = retriableJsonApi(2000, 5, (response) => !!response.metadata?.ok)
-  // const {callApi, responseBody} = useJsonApi(retriableApi(jsonApi('https://reqres.in/api/users?delay=2&page=1')))
-  // const {responseBody} = useJsonApiOnLoad(useJsonApi(retriableApi(jsonApi('https://reqres.in/api/users?delay=2&page=1'))))
+  // const {callApi, body} = useJsonApi(retriableApi(jsonApi('https://reqres.in/api/users?delay=2&page=1')))
+  // const {body} = useJsonApiOnLoad(useJsonApi(retriableApi(jsonApi('https://reqres.in/api/users?delay=2&page=1'))))
 
-  // const {responseBody} = useJsonApiOnLoad(useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1")))
+  // const {body} = useJsonApiOnLoad(useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1")))
 
-  const {callApi, responseBody} = useJsonApi(jsonApiResponseLogger(jsonApi("https://reqres.in/api/users?delay=2&page=1")))
+  const {callApi, body} = useJsonApi(jsonApiResponseLogger(jsonApi("https://reqres.in/api/users?delay=2&page=1")))
 
   return (
       <div className="App">
@@ -44,7 +44,7 @@ const App = () => {
           </p>
           <button onClick={callApi}>Fetch users</button>
           {
-            (responseBody as Response)?.data?.map(u => {
+            (body as Response)?.data?.map(u => {
               return (
                   <div key={u.id}>
                     <p>Name: {u.first_name} {u.last_name}</p>
