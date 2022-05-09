@@ -9,6 +9,7 @@ import jsonApiResponseLogger from "./services/json-api-response-logger";
 import useJsonApiStates from "./hooks/useJsonApiStates";
 import SuspenseOnTrigger from "./components/SuspenseOnTrigger";
 import SuspenseOnLoad from "./components/SuspenseOnLoad";
+import exponentialBackoffRetriableJsonApi from "./services/exponential-backoff-retriable-json-api";
 
 type User = {
   id: number;
@@ -47,6 +48,8 @@ const App = () => {
 
   // const {callApi, body} = useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1"))
 
+  const expoBackoffRetriableApi = exponentialBackoffRetriableJsonApi(100, 5,(response) => !!response.metadata?.ok)
+
   const retriableApi = retriableJsonApi(100, 5, (response) => !!response.metadata?.ok)
   // const {callApi, body} = useJsonApi(retriableApi(jsonApi('https://reqres.in/api/users?delay=2&page=1')))
   // const {body} = useJsonApiOnLoad(useJsonApi(retriableApi(jsonApi('https://reqres.in/api/users?delay=2&page=1'))))
@@ -76,7 +79,7 @@ const App = () => {
           {/*/>*/}
 
           <SuspenseOnLoad
-              api={retriableApi(jsonApi("https://reqres.in/api/users?delay=2&page=1"))}
+              api={jsonApiResponseLogger(expoBackoffRetriableApi(jsonApi("https://reqres.in/api/users?delay=2&page=1")))}
               LoadingComponent={() => <div>Loading users ...</div>}
               Component={({body}) => <UserData body={body}/>}
           />

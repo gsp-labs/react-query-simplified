@@ -1,6 +1,6 @@
 import {Api, ApiResponse} from "../json-api";
 
-type RetryUntil = (apiResponse: ApiResponse) => boolean
+export type RetryUntil = (apiResponse: ApiResponse) => boolean
 
 const retriableJsonApi = (duration: number, retryCount: number, retryUntil: RetryUntil) => (api: Api): Api => {
 
