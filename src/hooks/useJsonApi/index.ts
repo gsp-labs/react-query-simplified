@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Api, ApiResponse} from "../../services/json-api";
 
-type CallApi = {
+export type CallApi = {
   callApi: () => Promise<void>;
 }
 
@@ -12,9 +12,11 @@ const useJsonApi = (api: Api): UseJsonApi => {
   const [metadata, setMetadata] = useState<Response>()
 
   const callApi = async () => {
-      const response = await api.invoke()
-      setResponseBody(response.body)
-      setMetadata(response.metadata)
+    setResponseBody(undefined)
+    setMetadata(undefined)
+    const response = await api.invoke()
+    setResponseBody(response.body)
+    setMetadata(response.metadata)
   }
 
   return {

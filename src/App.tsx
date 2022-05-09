@@ -6,6 +6,8 @@ import jsonApi from "./services/json-api";
 import useJsonApiOnLoad from "./hooks/useJsonApiOnLoad";
 import retriableJsonApi from "./services/retriable-json-api";
 import jsonApiResponseLogger from "./services/json-api-response-logger";
+import useJsonApiStates from "./hooks/useJsonApiStates";
+import SuspenseOnTrigger from "./components/SuspenseOnTrigger";
 
 type User = {
   id: number;
@@ -23,6 +25,23 @@ type Response = {
   data: User[];
 }
 
+const UserData = ({body}: {body?: Response}) => {
+  return (
+      <>
+        {
+          body?.data?.map(u => {
+            return (
+                <div key={u.id}>
+                  <p>Name: {u.first_name} {u.last_name}</p>
+                  <p>Email: {u.email}</p>
+                </div>
+            )
+          })
+        }
+      </>
+  )
+}
+
 const App = () => {
 
   // const {callApi, body} = useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1"))
@@ -33,7 +52,9 @@ const App = () => {
 
   // const {body} = useJsonApiOnLoad(useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1")))
 
-  const {callApi, body} = useJsonApi(jsonApiResponseLogger(jsonApi("https://reqres.in/api/users?delay=2&page=1")))
+  // const {callApi, body} = useJsonApi(jsonApiResponseLogger(jsonApi("https://reqres.in/api/users?delay=2&page=1")))
+
+  // const {callApi, body, loading, metadata} = useJsonApiStates(useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1")))
 
   return (
       <div className="App">
@@ -42,17 +63,14 @@ const App = () => {
           <p>
             Users
           </p>
-          <button onClick={callApi}>Fetch users</button>
-          {
-            (body as Response)?.data?.map(u => {
-              return (
-                  <div key={u.id}>
-                    <p>Name: {u.first_name} {u.last_name}</p>
-                    <p>Email: {u.email}</p>
-                  </div>
-              )
-            })
-          }
+          {/*<button onClick={callApi}>Fetch users</button>*/}
+          {/*<UserData body={body}/>*/}
+          <SuspenseOnTrigger
+              api={jsonApi("https://reqres.in/api/users?delay=2&page=1")}
+              LoadingComponent={() => <div>Loading users ...</div>}
+              Component={({body}) => <UserData body={body}/>}
+              Trigger={({callApi, loading}) => <button onClick={callApi} disabled={loading}>Fetch users</button>}
+          />
         </header>
       </div>
   );
