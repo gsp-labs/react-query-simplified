@@ -46,7 +46,7 @@ const App = () => {
 
   // const {callApi, body} = useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1"))
 
-  // const retriableApi = retriableJsonApi(2000, 5, (response) => !!response.metadata?.ok)
+  const retriableApi = retriableJsonApi(100, 5, (response) => !!response.metadata?.ok)
   // const {callApi, body} = useJsonApi(retriableApi(jsonApi('https://reqres.in/api/users?delay=2&page=1')))
   // const {body} = useJsonApiOnLoad(useJsonApi(retriableApi(jsonApi('https://reqres.in/api/users?delay=2&page=1'))))
 
@@ -66,7 +66,7 @@ const App = () => {
           {/*<button onClick={callApi}>Fetch users</button>*/}
           {/*<UserData body={body}/>*/}
           <SuspenseOnTrigger
-              api={jsonApi("https://reqres.in/api/users?delay=2&page=1")}
+              api={retriableApi(jsonApi("https://reqres.in/api/users?delay=2&page=1"))}
               LoadingComponent={() => <div>Loading users ...</div>}
               Component={({body}) => <UserData body={body}/>}
               Trigger={({callApi, loading}) => <button onClick={callApi} disabled={loading}>Fetch users</button>}
