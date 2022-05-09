@@ -2,8 +2,8 @@ import {useCallback, useEffect} from "react";
 import {ApiResponse} from "../../services/json-api";
 import {UseJsonApi} from "../useJsonApi";
 
-const useJsonApiOnLoad = (useJsonApi: UseJsonApi): ApiResponse => {
-  const { callApi, metadata, body } = useJsonApi
+const useJsonApiOnLoad = <T extends UseJsonApi>(useJsonApi: T): ApiResponse & Omit<T, keyof UseJsonApi> => {
+  const { callApi, metadata, body, ...rest } = useJsonApi
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const memoizedApi = useCallback(() => callApi(), [])
@@ -16,7 +16,8 @@ const useJsonApiOnLoad = (useJsonApi: UseJsonApi): ApiResponse => {
 
   return {
     metadata,
-    body
+    body,
+    ...rest
   }
 }
 
