@@ -1,17 +1,17 @@
-import {Api, ApiResponse} from "../../services/json-api";
+import {Client, ApiResponse, ApiParams} from "../../services/json-api-client";
 import React from "react";
 import useJsonApi from "../../hooks/useJsonApi";
 import useJsonApiStates from "../../hooks/useJsonApiStates";
 import useJsonApiOnLoad from "../../hooks/useJsonApiOnLoad";
 
 type Props = {
-  api: Api;
+  client: Client;
   LoadingComponent: React.ElementType
   Component: (props: ApiResponse) => React.ReactElement;
 }
 
-const SuspenseOnLoad = ({ api, LoadingComponent, Component }: Props) => {
-  const {body, loading, metadata} = useJsonApiOnLoad(useJsonApiStates(useJsonApi(api)))
+const SuspenseOnLoad = ({ client, input, init, LoadingComponent, Component }: Props & ApiParams) => {
+  const {body, loading, metadata} = useJsonApiOnLoad(useJsonApiStates(useJsonApi(client)), input, init)
 
   return (
       <>

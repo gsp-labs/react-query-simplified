@@ -13,12 +13,17 @@ const makeApiCall = async (input: RequestInfo, init?: RequestInit): Promise<ApiR
   }
 }
 
-export type Api = {
-  invoke: () => Promise<ApiResponse>
+export type ApiParams = {
+  input: RequestInfo;
+  init?: RequestInit
 }
 
-const jsonApi = (input: RequestInfo, init?: RequestInit): Api => ({
-  invoke: () => makeApiCall(input, init)
+export type Client = {
+  invoke: (input: RequestInfo, init?: RequestInit) => Promise<ApiResponse>
+}
+
+const jsonApiClient = (): Client => ({
+  invoke: (input: RequestInfo, init?: RequestInit) => makeApiCall(input, init)
 })
 
-export default jsonApi
+export default jsonApiClient

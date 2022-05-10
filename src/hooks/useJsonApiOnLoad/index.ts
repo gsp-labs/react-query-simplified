@@ -1,12 +1,12 @@
 import {useCallback, useEffect} from "react";
-import {ApiResponse} from "../../services/json-api";
+import {ApiResponse} from "../../services/json-api-client";
 import {UseJsonApi} from "../useJsonApi";
 
-const useJsonApiOnLoad = <T extends UseJsonApi>(useJsonApi: T): ApiResponse & Omit<T, keyof UseJsonApi> => {
+const useJsonApiOnLoad = <T extends UseJsonApi>(useJsonApi: T, input: RequestInfo, init?: RequestInit): ApiResponse & Omit<T, keyof UseJsonApi> => {
   const { callApi, metadata, body, ...rest } = useJsonApi
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const memoizedApi = useCallback(() => callApi(), [])
+  const memoizedApi = useCallback(() => callApi(input, init), [])
 
   useEffect(() => {
     (async function fetchData() {

@@ -9,14 +9,14 @@ const useJsonApiStates = (useJsonApi: UseJsonApi): ApiStates & UseJsonApi => {
   const {callApi, body, metadata} = useJsonApi
   const [loading, setLoading] = useState(false)
 
-  const callApiWithStates = async () => {
+  const callApiWithStates = async (input: RequestInfo, init?: RequestInit) => {
     setLoading(true)
-    await callApi()
+    await callApi(input, init)
     setLoading(false)
   }
 
   return {
-    callApi: () => callApiWithStates(),
+    callApi: (input: RequestInfo, init?: RequestInit) => callApiWithStates(input, init),
     body,
     metadata,
     loading,

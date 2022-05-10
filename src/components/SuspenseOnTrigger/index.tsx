@@ -1,10 +1,10 @@
-import {Api, ApiResponse} from "../../services/json-api";
+import {Client, ApiResponse} from "../../services/json-api-client";
 import React from "react";
 import useJsonApiStates, {ApiStates} from "../../hooks/useJsonApiStates";
 import useJsonApi, {CallApi} from "../../hooks/useJsonApi";
 
 type Props = {
-  api: Api;
+  api: Client;
   LoadingComponent: React.ElementType
   Component: (props: ApiResponse) => React.ReactElement;
   Trigger: (props: CallApi & ApiStates) => React.ReactElement;

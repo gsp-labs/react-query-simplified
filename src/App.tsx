@@ -2,14 +2,15 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import useJsonApi from "./hooks/useJsonApi";
-import jsonApi from "./services/json-api";
 import useJsonApiOnLoad from "./hooks/useJsonApiOnLoad";
-import retriableJsonApi from "./services/retriable-json-api";
-import jsonApiResponseLogger from "./services/json-api-response-logger";
+import retriableJsonApiClient from "./services/retriable-json-api-client";
+import jsonApiLoggerClient from "./services/json-api-logger-client";
 import useJsonApiStates from "./hooks/useJsonApiStates";
 import SuspenseOnTrigger from "./components/SuspenseOnTrigger";
 import SuspenseOnLoad from "./components/SuspenseOnLoad";
-import exponentialBackoffRetriableJsonApi from "./services/exponential-backoff-retriable-json-api";
+import exponentialBackoffRetriableJsonApiClient from "./services/exponential-backoff-retriable-json-api-client";
+import jsonApiClient from "./services/json-api-client";
+import useAuthorisedJsonApi from "./hooks/useAuthorisedJsonApi";
 
 type User = {
   id: number;
@@ -46,20 +47,29 @@ const UserData = ({body}: {body?: Response}) => {
 
 const App = () => {
 
-  // const {callApi, body} = useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1"))
+  // const {callApi, body} = useJsonApi(jsonApiClient())
 
-  const expoBackoffRetriableApi = exponentialBackoffRetriableJsonApi(100, 5,(response) => !!response.metadata?.ok)
+  // const expoBackoffRetriableApi = exponentialBackoffRetriableJsonApiClient(100, 5,(response) => !!response.metadata?.ok)
 
-  const retriableApi = retriableJsonApi(100, 5, (response) => !!response.metadata?.ok)
-  // const {callApi, body} = useJsonApi(retriableApi(jsonApi('https://reqres.in/api/users?delay=2&page=1')))
-  // const {body} = useJsonApiOnLoad(useJsonApi(retriableApi(jsonApi('https://reqres.in/api/users?delay=2&page=1'))))
+  // const retriableApi = retriableJsonApiClient(100, 5, (response) => !!response.metadata?.ok)
+  // const {callApi, body} = useJsonApi(retriableApi(jsonApiClient()))
+  // const {body} = useJsonApiOnLoad(useJsonApi(retriableApi(jsonApiClient())), 'https://reqres.in/api/users?delay=2&page=1')
 
-  // const {body} = useJsonApiOnLoad(useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1")))
+  // const {body} = useJsonApiOnLoad(useJsonApi(jsonApiClient()), "https://reqres.in/api/users?delay=2&page=1")
 
-  // const {callApi, body} = useJsonApi(jsonApiResponseLogger(jsonApi("https://reqres.in/api/users?delay=2&page=1")))
+  // const {callApi, body} = useJsonApi(jsonApiLoggerClient(jsonApiClient()))
 
-  // const {callApi, body, loading, metadata} = useJsonApiStates(useJsonApi(jsonApi("https://reqres.in/api/users?delay=2&page=1")))
-  // console.log(loading, body)
+  // const {callApi, body, loading, metadata} = useJsonApiStates(useJsonApi(jsonApiClient()))
+  // console.log(loading, body, metadata)
+
+  // const {callApi, body} = useAuthorisedJsonApi(useJsonApi(jsonApiLoggerClient(jsonApiClient())))
+  
+  const {body} = useJsonApiOnLoad(useAuthorisedJsonApi(useJsonApi(jsonApiLoggerClient(jsonApiClient()))), "https://reqres.in/api/users?delay=2&page=1", {
+    headers: {
+      "X_TEST": "VALUE"
+    }
+  })
+
 
   return (
       <div className="App">
@@ -68,21 +78,26 @@ const App = () => {
           <p>
             Users
           </p>
-          {/*<button onClick={callApi}>Fetch users</button>*/}
-          {/*<UserData body={body}/>*/}
+          {/*<button onClick={() => callApi("https://reqres.in/api/users?delay=2&page=1", {*/}
+          {/*  headers: {*/}
+          {/*    "X_TEST": "VALUE"*/}
+          {/*  }*/}
+          {/*})}>Fetch users</button>*/}
+          <UserData body={body}/>
 
           {/*<SuspenseOnTrigger*/}
-          {/*    api={retriableApi(jsonApi("https://reqres.in/api/users?delay=2&page=1"))}*/}
+          {/*    api={retriableApi(jsonApiClient())}*/}
           {/*    LoadingComponent={() => <div>Loading users ...</div>}*/}
           {/*    Component={({body}) => <UserData body={body}/>}*/}
-          {/*    Trigger={({callApi, loading}) => <button onClick={callApi} disabled={loading}>Fetch users</button>}*/}
+          {/*    Trigger={({callApi, loading}) => <button onClick={() => callApi("https://reqres.in/api/users?delay=2&page=1")} disabled={loading}>Fetch users</button>}*/}
           {/*/>*/}
 
-          <SuspenseOnLoad
-              api={jsonApiResponseLogger(expoBackoffRetriableApi(jsonApi("https://reqres.in/api/users?delay=2&page=1")))}
-              LoadingComponent={() => <div>Loading users ...</div>}
-              Component={({body}) => <UserData body={body}/>}
-          />
+          {/*<SuspenseOnLoad*/}
+          {/*    client={jsonApiLoggerClient(expoBackoffRetriableApi(jsonApiClient()))}*/}
+          {/*    LoadingComponent={() => <div>Loading users ...</div>}*/}
+          {/*    Component={({body}) => <UserData body={body}/>}*/}
+          {/*    input="https://reqres.in/api/users?delay=2&page=1"*/}
+          {/*/>*/}
         </header>
       </div>
   );
