@@ -76,25 +76,11 @@ const App = () => {
           <p>
             Users
           </p>
-          {/*<button onClick={() => callApi("https://reqres.in/api/users?delay=2&page=1", {*/}
-          {/*  headers: {*/}
-          {/*    "X_TEST": "VALUE"*/}
-          {/*  }*/}
-          {/*})}>Fetch users</button>*/}
-          {/*<UserData body={body}/>*/}
-
-          {/*<SuspenseOnTrigger*/}
-          {/*    api={retriableApi(jsonApiClient())}*/}
-          {/*    LoadingComponent={() => <div>Loading users ...</div>}*/}
-          {/*    Component={({body}) => <UserData body={body}/>}*/}
-          {/*    Trigger={({callApi, loading}) => <button onClick={() => callApi("https://reqres.in/api/users?delay=2&page=1")} disabled={loading}>Fetch users</button>}*/}
-          {/*/>*/}
-
-          <SuspenseOnLoad
-              client={jsonApiLoggerClient(expoBackoffRetriableApi(jsonApiClient()))}
+          <SuspenseOnTrigger
+              api={expoBackoffRetriableApi(jsonApiClient())}
               LoadingComponent={() => <div>Loading users ...</div>}
               Component={({body}) => <UserData body={body}/>}
-              input="https://reqres.in/api/users?delay=2&page=1"
+              Trigger={({callApi, loading}) => <button onClick={() => callApi("https://reqres.in/api/users?delay=2&page=1")} disabled={loading}>Fetch users</button>}
           />
         </header>
       </div>
